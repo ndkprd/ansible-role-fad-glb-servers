@@ -10,13 +10,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # - name: checkout
-      #   uses: actions/checkout@v2
-      # - name: galaxy
-      #   uses: robertdebock/galaxy-action@1.2.0
-      #   with:
-      #     galaxy_api_key: ${{ secrets.galaxy_api_key }}
-      #     git_branch: main
 
       - name: Set up Python 3.
         uses: actions/setup-python@v5
