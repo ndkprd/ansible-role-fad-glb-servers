@@ -2,14 +2,36 @@
 
 ## Description
 
-Ansible role to create/update Fortinet's FortiADC GLB Servers and its members using REST API.
+Ansible role to create/update Fortinet's FortiADC GLB Servers and its members using REST API. 
+
+Since the GLB Servers need the Data Centers to be exist first, it depends on my other role: [ndkprd.fortiadc-glb-data-center](https://github.com/ndkprd/ansible-role-fortiadc-glb-data-center).
 
 ## Usage
 
 ### Install Role
 
+#### From Galaxy
+
 ```
 ansible-galaxy install ndkprd.fortiadc-glb-servers
+```
+
+#### From Github
+
+##### Create Requirements File
+
+```
+---
+# ./requirements.yaml
+
+- name: ndkprd.fortiadc-glb-servers
+  scm: git
+  src: https://github.com/ndkprd/ansible-role-fortiadc-glb-servers
+  version: main
+```
+
+```
+ansible-galaxy install -r requirements.yaml
 ```
 
 ### Hosts Example
@@ -26,9 +48,10 @@ fad2.ndkprd.com fad_apitoken=mysupersecrettoken
 fad_vdom: root
 
 fad_glb_data_centers:
-  - name: dc1.ndkprd.com
+  - name: dc1.ndkprd.com # GLB servers mkey
+    location: ID # 2-letter country ID
     glb_servers:
-      - name: "dmz.dc1.ndkprd.com" # GLB servers mkey
+      - name: "dmz.dc1.ndkprd.com" # GLB servers member mkey
         health_check_ctrl: enable # "enable" or "disable"
         health_check_list: LB_HLTHCK_ICMP # must exists
         health_check_relationship: AND # either "AND" or "OR"

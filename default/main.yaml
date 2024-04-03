@@ -2,6 +2,7 @@ fad_vdom: root
 
 fad_glb_data_centers:
   - name: dc1.ndkprd.com # Data Center name
+    location: ID # 2-letter country ID
     glb_servers:
       - name: "dmz.dc1.ndkprd.com" # GLB servers mkey
         health_check_ctrl: enable # "enable" or "disable"
@@ -18,6 +19,7 @@ fad_glb_data_centers:
             ip: 10.10.10.10 # GLB servers IP address
             health_check_inherit: enable # I just enable inherit to reduce headache
   - name: dc2.ndkprd.com
+    location: ID # 2-letter country ID
     glb_servers:
       - name: "dmz.dc2.ndkprd.com"
         health_check_ctrl: enable
