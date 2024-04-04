@@ -36,20 +36,18 @@
 
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
   when: >
-    (
-      fad_glb_servers_existing_data.json.payload.auth-type != glb_server.auth_type or
-      fad_glb_servers_existing_data.json.payload.auto-sync != glb_server.auto_sync or
-      fad_glb_servers_existing_data.json.payload.data-center != data_center.name or
-      fad_glb_servers_existing_data.json.payload.health_check_ctrl != glb_server.health_check_ctrl or
-      fad_glb_servers_existing_data.json.payload.health_check_list != glb_server.health_check_list or
-      fad_glb_servers_existing_data.json.payload.health_check_relationship != glb_server.health_check_relationship or
-      fad_glb_servers_existing_data.json.payload.ip != glb_server.fad_ip or
-      fad_glb_servers_existing_data.json.payload.mkey != glb_server.name or
-      fad_glb_servers_existing_data.json.payload.password != glb_server.fad_pass or
-      fad_glb_servers_existing_data.json.payload.port != glb_server.fad_port or
-      fad_glb_servers_existing_data.json.payload.server-type != glb_server.server_type or
-      fad_glb_servers_existing_data.json.payload.server_member != glb_server.server_members
-    )
+    fad_glb_servers_existing_data.json.payload.auth-type != glb_server.auth_type or
+    fad_glb_servers_existing_data.json.payload.auto-sync != glb_server.auto_sync or
+    fad_glb_servers_existing_data.json.payload.data-center != data_center.name or
+    fad_glb_servers_existing_data.json.payload.health_check_ctrl != glb_server.health_check_ctrl or
+    fad_glb_servers_existing_data.json.payload.health_check_list != glb_server.health_check_list or
+    fad_glb_servers_existing_data.json.payload.health_check_relationship != glb_server.health_check_relationship or
+    fad_glb_servers_existing_data.json.payload.ip != glb_server.fad_ip or
+    fad_glb_servers_existing_data.json.payload.mkey != glb_server.name or
+    fad_glb_servers_existing_data.json.payload.password != glb_server.fad_pass or
+    fad_glb_servers_existing_data.json.payload.port != glb_server.fad_port or
+    fad_glb_servers_existing_data.json.payload.server-type != glb_server.server_type or
+    fad_glb_servers_existing_data.json.payload.server_member != glb_server.server_members
   tags:
     - fad_glb_servers
   block:
