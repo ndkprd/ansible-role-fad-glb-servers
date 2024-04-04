@@ -63,7 +63,8 @@
     fad_glb_servers_existing_data.json.payload.health_check_relationship != glb_server.health_check_relationship or
     fad_glb_servers_existing_data.json.payload.ip != glb_server.fad_ip or
     fad_glb_servers_existing_data.json.payload.mkey != glb_server.name or
-    fad_glb_servers_existing_data.json.payload.password != glb_server.fad_pass
+    fad_glb_servers_existing_data.json.payload.password != glb_server.fad_pass or
+    fad_glb_servers_existing_data.json.payload.port != glb_server.fad_port
   tags:
     - fad_glb_servers
   block:
