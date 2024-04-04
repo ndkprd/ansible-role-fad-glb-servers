@@ -26,13 +26,13 @@
   tags:
     - fad_glb_servers
 
-  - name: Print the existing value of GLB Servers entry ({{ fad_glb_servers_name }}).
-    ansible.builtin.debug:
-      var: fad_glb_servers_existing_data.json.payload
-    delegate_to: localhost
-    tags:
-      - fad_glb_servers
-      - debug
+- name: Print the existing value of GLB Servers entry ({{ fad_glb_servers_name }}).
+  ansible.builtin.debug:
+    var: fad_glb_servers_existing_data.json.payload
+  delegate_to: localhost
+  tags:
+    - fad_glb_servers
+    - debug
 
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
   when: >
