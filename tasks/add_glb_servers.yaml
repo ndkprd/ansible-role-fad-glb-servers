@@ -46,9 +46,9 @@
       "{{ fad_glb_servers_existing_data.json.payload.ip }} vs {{ glb_server.fad_ip }}"
       "{{ fad_glb_servers_existing_data.json.payload.mkey }} vs {{ glb_server.name }}"
       "{{ fad_glb_servers_existing_data.json.payload.password }} vs {{glb_server.fad_pass }} "
-      "{{ fad_glb_servers_existing_data.json.payload.port }} vs"
-      "{{ fad_glb_servers_existing_data.json.payload['server-type'] }} vs {{ glb_server.fad_port }}"
-      "{{ fad_glb_servers_existing_data.json.payload.server_member }} vs {{ glb_server.server_type }}"
+      "{{ fad_glb_servers_existing_data.json.payload.port }} vs {{ glb_server.fad_port }}"
+      "{{ fad_glb_servers_existing_data.json.payload['server-type'] }} vs {{ glb_server.server_type }}"
+      "{{ fad_glb_servers_existing_data.json.payload.server_member }} vs {{ glb_server.server_members }}"
   tags:
     - fad_glb_servers
     - debug
