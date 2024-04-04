@@ -37,18 +37,18 @@
 - name: Debug out existing variable.
   ansible.builtin.debug:
     msg: >
-      fad_glb_servers_existing_data.json.payload.auth-type: "{{ fad_glb_servers_existing_data.json.payload['auth-type'] }}"
-      fad_glb_servers_existing_data.json.payload.auto-sync: "{{ fad_glb_servers_existing_data.json.payload['auto-sync'] }}"
-      fad_glb_servers_existing_data.json.payload.data-center: "{{       fad_glb_servers_existing_data.json.payload['data-center'] }}"
-      fad_glb_servers_existing_data.json.payload.health_check_ctrl: "{{ fad_glb_servers_existing_data.json.payload.health_check_ctrl }}"
-      fad_glb_servers_existing_data.json.payload.health_check_list: "{{ fad_glb_servers_existing_data.json.payload.health_check_list }}"
-      fad_glb_servers_existing_data.json.payload.health_check_relationship: "{{ fad_glb_servers_existing_data.json.payload.health_check_relationship }}"
-      fad_glb_servers_existing_data.json.payload.ip: "{{ fad_glb_servers_existing_data.json.payload.ip }}"
-      fad_glb_servers_existing_data.json.payload.mkey: "{{ fad_glb_servers_existing_data.json.payload.mkey }}"
-      fad_glb_servers_existing_data.json.payload.password: "{{ fad_glb_servers_existing_data.json.payload.password }}"
-      fad_glb_servers_existing_data.json.payload.port: "{{ fad_glb_servers_existing_data.json.payload.port }}"
-      fad_glb_servers_existing_data.json.payload.server-type: "{{ fad_glb_servers_existing_data.json.payload['server-type'] }}"
-      fad_glb_servers_existing_data.json.payload.server_member: "{{ fad_glb_servers_existing_data.json.payload.server_member }}"
+      "{{ fad_glb_servers_existing_data.json.payload['auth-type'] }} vs {{ glb_server.auth_type }}"
+      "{{ fad_glb_servers_existing_data.json.payload['auto-sync'] }} vs {{ glb_server.auto_sync }}"
+      "{{ fad_glb_servers_existing_data.json.payload['data-center'] }} vs {{ data_center.name }}"
+      "{{ fad_glb_servers_existing_data.json.payload.health_check_ctrl }} vs {{ glb_server.health_check_ctrl }}"
+      "{{ fad_glb_servers_existing_data.json.payload.health_check_list }} vs {{ glb_server.health_check_list }}"
+      "{{ fad_glb_servers_existing_data.json.payload.health_check_relationship }} vs {{ glb_server.health_check_relationship }}"
+      "{{ fad_glb_servers_existing_data.json.payload.ip }} vs {{ glb_server.fad_ip }}"
+      "{{ fad_glb_servers_existing_data.json.payload.mkey }} vs {{ glb_server.name }}"
+      "{{ fad_glb_servers_existing_data.json.payload.password }} vs {{glb_server.fad_pass }} "
+      "{{ fad_glb_servers_existing_data.json.payload.port }} vs"
+      "{{ fad_glb_servers_existing_data.json.payload['server-type'] }} vs {{ glb_server.fad_port }}"
+      "{{ fad_glb_servers_existing_data.json.payload.server_member }} vs {{ glb_server.server_type }}"
   tags:
     - fad_glb_servers
     - debug
