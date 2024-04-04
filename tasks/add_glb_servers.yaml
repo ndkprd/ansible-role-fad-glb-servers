@@ -37,7 +37,7 @@
 - name: Debug out existing variable.
   ansible.builtin.debug:
     msg: >
-      fad_glb_servers_existing_data.json.payload.auth-type: "{{fad_glb_servers_existing_data.json.payload[auth-type] }}"
+      fad_glb_servers_existing_data.json.payload.auth-type: "{{ fad_glb_servers_existing_data.json.payload[auth-type] }}"
       fad_glb_servers_existing_data.json.payload.auto-sync: "{{ fad_glb_servers_existing_data.json.payload[auto-sync] }}"
       fad_glb_servers_existing_data.json.payload.data-center: "{{       fad_glb_servers_existing_data.json.payload[data-center] }}"
       fad_glb_servers_existing_data.json.payload.health_check_ctrl: "{{ fad_glb_servers_existing_data.json.payload.health_check_ctrl }}"
