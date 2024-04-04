@@ -2,11 +2,14 @@
   ansible.builtin.set_fact:
     fad_api_endpoint_glb_servers: https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ glb_server.name }}
     fad_glb_servers_name: "{{ data_center.name }}/{{ glb_server.name }}"
+  tags:
+    - fad_glb_servers
 
 - name: Print out the GLB servers REST API endpoint ({{ fad_glb_servers_name }}).
   ansible.builtin.debug:
     msg: "This FAD GLB servers REST API endpoint: {{ fad_api_endpoint_glb_servers }}"
   tags:
+    - fad_glb_servers
     - debug
 
 - name: Get the existing value of GLB servers entry ({{ fad_glb_servers_name }}).
@@ -20,6 +23,16 @@
     headers: "{{ fad_api_header }}"
   register: fad_glb_servers_existing_data
   delegate_to: localhost
+  tags:
+    - fad_glb_servers
+
+  - name: Print the existing value of GLB Servers entry ({{ fad_glb_servers_name }}).
+    ansible.builtin.debug:
+      var: fad_glb_servers_existing_data.json.payload
+    delegate_to: localhost
+    tags:
+      - fad_glb_servers
+      - debug
 
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
   when: >
@@ -40,13 +53,6 @@
   tags:
     - fad_glb_servers
   block:
-
-    - name: Print the existing value of GLB Servers entry ({{ fad_glb_servers_name }}).
-      ansible.builtin.debug:
-        var: fad_glb_servers_existing_data.json.payload
-      delegate_to: localhost
-      tags:
-        - debug
 
     - name: Write GLB Servers request body json tmp file ({{ fad_glb_servers_name }}).
       ansible.builtin.copy:
