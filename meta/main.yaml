@@ -21,4 +21,4 @@ galaxy_info:
 
 dependencies:
   - name: ndkprd.fortiadc-glb-data-center
-    version: latest
+    version: v1.0.0
