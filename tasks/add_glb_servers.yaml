@@ -56,7 +56,8 @@
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
   when: >
     fad_glb_servers_existing_data.json.payload['auth-type'] != glb_server.auth_type or
-    fad_glb_servers_existing_data.json.payload['auto-sync'] != glb_server.auto_sync
+    fad_glb_servers_existing_data.json.payload['auto-sync'] != glb_server.auto_sync or
+    fad_glb_servers_existing_data.json.payload['data-center'] != data_center.name
   tags:
     - fad_glb_servers
   block:
