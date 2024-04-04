@@ -20,4 +20,5 @@ galaxy_info:
     - fortinet
 
 dependencies:
-  - ndkprd.fortiadc-glb-data-center
+  - name: ndkprd.fortiadc-glb-data-center
+    version: latest
