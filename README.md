@@ -59,7 +59,7 @@ fad_glb_data_centers:
         auto_sync: disable # "enable" only when server_type: FortiADC-SLB
         fad_ip: 0.0.0.0 # FortiADC IP if using server_type: FortiADC-SLB
         fad_pass: "" # FortiADC admin pass if using server_type: FortiADC-SLB
-        fad_port: 5858 # FortiADC sync port if using server_type: FortiADC-SLB
+        fad_port: "5858" # FortiADC sync port if using server_type: FortiADC-SLB, use quote since it will be taken as string
         server_members:
           - name: waf1.dmz.dc1.ndkprd.com # GLB servers child mkey
             ip: 10.10.10.10 # GLB servers IP address
