@@ -126,26 +126,6 @@
       when: "fad_glb_servers_post_result.json.payload == -15"
       failed_when: "fad_glb_servers_put_result.json.payload != -15 and fad_glb_servers_put_result.json.payload != 0"
 
-    - name: Check if the FAD GLB Servers value has changed ({{ fad_glb_servers_name }}).
-      ansible.builtin.uri:
-        method: GET
-        url: "{{ fad_api_endpoint_glb_servers }}"
-        body_format: "{{ fad_api_uri_params.body_format }}"
-        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-        return_content: "{{ fad_api_uri_params.return_content }}"
-        status_code: "{{ fad_api_uri_params.status_code }}"
-        headers: "{{ fad_api_header }}"
-      register: fad_glb_servers_new_data
-      changed_when: "fad_glb_servers_new_data.json.payload != fad_glb_servers_existing_data.json.payload"
-      delegate_to: localhost
-
-    - name: Print the existing value of data center entry ({{ fad_glb_servers_name }}).
-      ansible.builtin.debug:
-        var: fad_glb_servers_new_data.json
-      delegate_to: localhost
-      tags:
-        - debug
-
 - name: Include the FAD GLB Servers member task ({{ fad_glb_servers_name }}).
   ansible.builtin.include_tasks: add_glb_servers_members.yaml
   loop: "{{ glb_server.server_members }}"
@@ -154,3 +134,26 @@
   tags:
     - fad_glb_servers
     - fad_glb_servers_members
+
+- name: Check if the FAD GLB Servers value has changed ({{ fad_glb_servers_name }}).
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ fad_api_endpoint_glb_servers }}"
+    body_format: "{{ fad_api_uri_params.body_format }}"
+    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    return_content: "{{ fad_api_uri_params.return_content }}"
+    status_code: "{{ fad_api_uri_params.status_code }}"
+    headers: "{{ fad_api_header }}"
+  register: fad_glb_servers_new_data
+  changed_when: "fad_glb_servers_new_data.json.payload != fad_glb_servers_existing_data.json.payload"
+  delegate_to: localhost
+  tags:
+    - fad_glb_servers
+
+- name: Print the existing value of data center entry ({{ fad_glb_servers_name }}).
+  ansible.builtin.debug:
+    var: fad_glb_servers_new_data.json
+  delegate_to: localhost
+  tags:
+    - fad_glb_servers
+    - debug

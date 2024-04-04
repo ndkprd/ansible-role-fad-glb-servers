@@ -2,11 +2,14 @@
   ansible.builtin.set_fact:
     fad_api_endpoint_server_members: https://{{ ansible_host }}/api/global_load_balance_servers_child_virtual_server_list?vdom={{ fad_vdom }}&pkey={{ glb_server.name }}&mkey={{ server_member.name }}
     fad_glb_servers_member_name: "{{ data_center.name }}/{{ glb_server.name }}/{{ server_member.name }}"
+  tags:
+    - fad_glb_servers_members
 
 - name: Print out the GLB Servers member REST API endpoint ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     msg: "This FAD GLB servers member REST API endpoint: {{ fad_api_endpoint_server_members }}"
   tags:
+    - fad_glb_servers_members
     - debug
 
 - name: Get the existing value of GLB Servers member entry ({{ fad_glb_servers_member_name }}).
@@ -20,6 +23,8 @@
     headers: "{{ fad_api_header }}"
   register: fad_servers_member_existing_data
   delegate_to: localhost
+  tags:
+    - fad_glb_servers_members
 
 - name: Print the existing value of GLB Servers member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
