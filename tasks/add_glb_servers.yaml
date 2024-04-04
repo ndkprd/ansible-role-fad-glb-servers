@@ -50,6 +50,7 @@
       fad_glb_servers_existing_data.json.payload.server-type: "{{ fad_glb_servers_existing_data.json.payload.server-type }}"
       fad_glb_servers_existing_data.json.payload.server_member: "{{ fad_glb_servers_existing_data.json.payload.server_member }}"
   tags:
+    - fad_glb_servers
     - debug
 
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
