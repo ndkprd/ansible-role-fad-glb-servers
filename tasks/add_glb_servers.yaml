@@ -151,3 +151,6 @@
   loop: "{{ glb_server.server_members }}"
   loop_control:
     loop_var: server_member
+  tags:
+    - fad_glb_servers
+    - fad_glb_servers_members
