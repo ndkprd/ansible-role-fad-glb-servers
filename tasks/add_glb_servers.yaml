@@ -148,6 +148,6 @@
 
 - name: Include the FAD GLB Servers member task ({{ fad_glb_servers_name }}).
   ansible.builtin.include_tasks: add_glb_servers_members.yaml
-    loop: "{{ glb_server.server_members }}"
-    loop_control:
-      loop_var: server_member
+  loop: "{{ glb_server.server_members }}"
+  loop_control:
+    loop_var: server_member
