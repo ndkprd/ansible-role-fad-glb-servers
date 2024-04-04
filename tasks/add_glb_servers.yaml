@@ -34,6 +34,24 @@
     - fad_glb_servers
     - debug
 
+- name: Debug out existing variable.
+  ansible.builtin.debug:
+    msg: >
+      fad_glb_servers_existing_data.json.payload.auth-type: "{{fad_glb_servers_existing_data.json.payload.auth-type }}"
+      fad_glb_servers_existing_data.json.payload.auto-sync: "{{ fad_glb_servers_existing_data.json.payload.auto-sync }}"
+      fad_glb_servers_existing_data.json.payload.data-center: "{{       fad_glb_servers_existing_data.json.payload.data-center }}"
+      fad_glb_servers_existing_data.json.payload.health_check_ctrl: "{{ fad_glb_servers_existing_data.json.payload.health_check_ctrl }}"
+      fad_glb_servers_existing_data.json.payload.health_check_list: "{{ fad_glb_servers_existing_data.json.payload.health_check_list }}"
+      fad_glb_servers_existing_data.json.payload.health_check_relationship: "{{ fad_glb_servers_existing_data.json.payload.health_check_relationship }}"
+      fad_glb_servers_existing_data.json.payload.ip: "{{ fad_glb_servers_existing_data.json.payload.ip }}"
+      fad_glb_servers_existing_data.json.payload.mkey: "{{ fad_glb_servers_existing_data.json.payload.mkey }}"
+      fad_glb_servers_existing_data.json.payload.password: "{{ fad_glb_servers_existing_data.json.payload.password }}"
+      fad_glb_servers_existing_data.json.payload.port: "{{ fad_glb_servers_existing_data.json.payload.port }}"
+      fad_glb_servers_existing_data.json.payload.server-type: "{{ fad_glb_servers_existing_data.json.payload.server-type }}"
+      fad_glb_servers_existing_data.json.payload.server_member: "{{ fad_glb_servers_existing_data.json.payload.server_member }}"
+  tags:
+    - debug
+
 - name: Create/update GLB Servers entry when idempotent check fails ({{ fad_glb_servers_name }}).
   when: >
     fad_glb_servers_existing_data.json.payload["auth-type"] != glb_server.auth_type or
