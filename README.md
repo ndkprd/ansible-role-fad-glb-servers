@@ -44,16 +44,15 @@ fad2.ndkprd.com fad_apitoken=mysupersecrettoken
 ### Vars Example
 
 ```
----
 fad_vdom: root
 
 fad_glb_data_centers:
-  - name: dc1.ndkprd.com # GLB servers mkey
+  - name: dc1.ndkprd.com # Data Center name
     location: ID # 2-letter country ID
     glb_servers:
-      - name: "dmz.dc1.ndkprd.com" # GLB servers member mkey
+      - name: "dmz.dc1.ndkprd.com" # GLB servers mkey
         health_check_ctrl: enable # "enable" or "disable"
-        health_check_list: LB_HLTHCK_ICMP # must exists
+        health_check_list: "LB_HLTHCK_ICMP " # must exists first, also, the FAD default one HAVE a single whitespace after the name, probably to make space to other HLTHCK
         health_check_relationship: AND # either "AND" or "OR"
         server_type: Generic-Host # "Generic-Host" or "FortiADC-SLB"
         auth_type: none # check FortiADC docs
@@ -66,6 +65,7 @@ fad_glb_data_centers:
             ip: 10.10.10.10 # GLB servers IP address
             health_check_inherit: enable # I just enable inherit to reduce headache
   - name: dc2.ndkprd.com
+    location: ID # 2-letter country ID
     glb_servers:
       - name: "dmz.dc2.ndkprd.com"
         health_check_ctrl: enable
