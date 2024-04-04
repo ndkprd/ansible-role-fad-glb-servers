@@ -65,8 +65,7 @@
     fad_glb_servers_existing_data.json.payload.mkey != glb_server.name or
     fad_glb_servers_existing_data.json.payload.password != glb_server.fad_pass or
     fad_glb_servers_existing_data.json.payload.port != glb_server.fad_port or
-    fad_glb_servers_existing_data.json.payload['server-type'] != glb_server.server_type or
-    fad_glb_servers_existing_data.json.payload.server_member != glb_server.server_members
+    fad_glb_servers_existing_data.json.payload['server-type'] != glb_server.server_type
   tags:
     - fad_glb_servers
   block:
@@ -127,12 +126,6 @@
       when: "fad_glb_servers_post_result.json.payload == -15"
       failed_when: "fad_glb_servers_put_result.json.payload != -15 and fad_glb_servers_put_result.json.payload != 0"
 
-    - name: Include the FAD GLB Servers member task ({{ fad_glb_servers_name }}).
-      ansible.builtin.include_tasks: add_glb_servers_members.yaml
-      loop: "{{ glb_server.server_members }}"
-      loop_control:
-        loop_var: server_member
-
     - name: Check if the FAD GLB Servers value has changed ({{ fad_glb_servers_name }}).
       ansible.builtin.uri:
         method: GET
@@ -152,3 +145,9 @@
       delegate_to: localhost
       tags:
         - debug
+
+- name: Include the FAD GLB Servers member task ({{ fad_glb_servers_name }}).
+  ansible.builtin.include_tasks: add_glb_servers_members.yaml
+    loop: "{{ glb_server.server_members }}"
+    loop_control:
+      loop_var: server_member
