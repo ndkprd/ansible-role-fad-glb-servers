@@ -62,7 +62,7 @@
   tags:
     - fad_glb_servers
 
-- name: Create new GLB Server entry ({{ fad_glb_server_name }}).
+- name: Create new GLB Server entry if entry doesn't exist ({{ fad_glb_server_name }}).
   ansible.builtin.uri:
     method: POST
     url: "{{ fad_api_endpoint_glb_server }}"
@@ -80,7 +80,7 @@
   tags:
     - fad_glb_servers
 
-- name: Update the GLB Server entry if entry exist ({{ fad_glb_server_name }}).
+- name: Update the GLB Server entry if entry exist and idempotency check fail ({{ fad_glb_server_name }}).
   ansible.builtin.uri:
     method: PUT
     url: "{{ fad_api_endpoint_glb_server }}"

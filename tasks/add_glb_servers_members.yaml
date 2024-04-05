@@ -56,7 +56,7 @@
   tags:
     - fad_glb_servers_members
 
-- name: Trying to create new GLB Server Member entry ({{ fad_glb_servers_member_name }}).
+- name: Create new GLB Server Member entry if entry doesn't exist ({{ fad_glb_servers_member_name }}).
   ansible.builtin.uri:
     method: POST
     url: "{{ fad_api_endpoint_server_members }}"
@@ -74,7 +74,7 @@
   tags:
     - fad_glb_servers_members
 
-- name: Update the GLB Server Member entry if entry exist ({{ fad_glb_servers_member_name }}).
+- name: Update the GLB Server Member entry if entry exist and idempotent check fail ({{ fad_glb_servers_member_name }}).
   ansible.builtin.uri:
     method: PUT
     url: "{{ fad_api_endpoint_server_members }}"
