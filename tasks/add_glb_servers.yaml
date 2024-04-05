@@ -93,7 +93,7 @@
   register: fad_glb_server_put_result
   delegate_to: localhost
   when: >
-    (fad_glb_server_existing_data.json payload is defined) and
+    (fad_glb_server_existing_data.json.payload is defined) and
     (fad_glb_server_existing_data.json.payload['auth-type'] != glb_server.auth_type or
     fad_glb_server_existing_data.json.payload['auto-sync'] != glb_server.auto_sync or
     fad_glb_server_existing_data.json.payload['data-center'] != glb_server.data_center or
