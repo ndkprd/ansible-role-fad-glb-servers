@@ -100,8 +100,8 @@
     fad_glb_server_existing_data.json.payload.health_check_ctrl != glb_server.health_check_ctrl or
     fad_glb_server_existing_data.json.payload.health_check_list != glb_server.health_check_list or
     fad_glb_server_existing_data.json.payload.health_check_relationship != glb_server.health_check_relationship or
-    fad_glb_server_existing_data.json.payload.ip != glb_server.fad_ip or
-    fad_glb_server_existing_data.json.payload.mkey != glb_server.name or
+    fad_glb_server_existing_data.json.payload.ip != glb_server.fad_ipv4 or
+    fad_glb_server_existing_data.json.payload.ip6 != glb_server_fad_ipv6 or
     fad_glb_server_existing_data.json.payload.password != glb_server.fad_pass or
     fad_glb_server_existing_data.json.payload.port != glb_server.fad_port or
     fad_glb_server_existing_data.json.payload['server-type'] != glb_server.server_type)
