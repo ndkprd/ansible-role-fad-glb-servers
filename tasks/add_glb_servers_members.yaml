@@ -88,7 +88,7 @@
   delegate_to: localhost
   when: >
     (fad_server_member_existing_data.json.payload.mkey is defined) and
-    (fad_server_member_existing_data.json.payload.[address-type] != server_member.address_type or
+    (fad_server_member_existing_data.json.payload[address-type] != server_member.address_type or
     fad_server_member_existing_data.json.payload.gateway != server_member.gateway or
     fad_server_member_existing_data.json.payload.health_check_ctrl != server_member.health_check_ctrl or
     fad_server_member_existing_data.json.payload.health_check_inherit != server_member.health_check_inherit or
