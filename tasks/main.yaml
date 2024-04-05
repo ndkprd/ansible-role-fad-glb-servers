@@ -4,10 +4,10 @@
   ansible.builtin.include_role:
     name: ndkprd.fortiadc-glb-data-center
 
-- name: Create/update data by looping through data center vars.
-  ansible.builtin.include_tasks: loop_glb_data_centers.yaml
-  loop: "{{ fad_glb_data_centers }}"
+- name: Create/update GLB Servers and Server Members.
+  ansible.builtin.include_tasks: add_glb_servers.yaml
+  loop: "{{ fad_glb_servers }}"
+  loop_control:
+    loop_var: glb_server
   tags:
     - fad_glb_servers
-  loop_control:
-    loop_var: data_center
