@@ -17,6 +17,7 @@ fad_glb_servers:
     health_check_relationship: AND      
     server_type: Generic-Host # "Generic-Host" or "FortiADC-SLB"
     auth_type: none # Only for FortiADC-SLB
+    address_type: ipv4 # FAD address type
     auto_sync: disable # Only for FortiADC-SLB
     fad_ipv4: "0.0.0.0" # Only for FortiADC-SLB
     fad_ipv6: "::" # Only for FortiADC-SLB
@@ -31,6 +32,7 @@ fad_glb_servers:
     health_check_relationship: AND
     server_type: Generic-Host
     auth_type: none
+    address_type: ipv4 # FAD address type
     auto_sync: disable
     fad_ipv4: "0.0.0.0"
     fad_ipv6: "::"
@@ -63,6 +65,7 @@ fad_glb_servers:
     health_check_relationship: AND
     server_type: Generic-Host
     auth_type: none
+    address_type: ipv4 # FAD address type
     auto_sync: disable
     fad_ipv4: "0.0.0.0"
     fad_ipv6: "::"
