@@ -43,7 +43,7 @@
         "health_check_ctrl": "{{ server_member.health_check_ctrl }}",
         "health_check_inherit": "{{ server_member.health_check_inherit }}",
         "health_check_list": "{{ server_member.health_check_list }}",
-        "health_check_relationship": "{{ server_member.health_check_relationshio }}",
+        "health_check_relationship": "{{ server_member.health_check_relationship }}",
         "ip": "{{ server_member.ipv4 }}",
         "ip6": "{{ server_member.ipv6 }}",
         "mkey": "{{ server_member.name }}"
