@@ -99,10 +99,10 @@ fad_glb_servers:
         ipv6: "::"
         address_type: ipv4
         gateway: ""
-        health_check_ctrl: ""
+        health_check_ctrl: disable # default value
         health_check_inherit: enable
         health_check_list: ""
-        health_check_relationship: ""
+        health_check_relationship: OR # default value
 
   - name: "dmz.dc2.ndkprd.com"
     data_center: "dc2.ndkprd.com"
@@ -123,10 +123,10 @@ fad_glb_servers:
         ipv6: "::"
         address_type: ipv4
         gateway: ""
-        health_check_ctrl: disable
+        health_check_ctrl: disable # default value
         health_check_inherit: enable
         health_check_list: ""
-        health_check_relationship: "OR"
+        health_check_relationship: OR # default value
 
 ```
 
