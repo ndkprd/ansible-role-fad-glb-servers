@@ -73,7 +73,7 @@
     headers: "{{ fad_api_header }}"
     body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
   register: fad_glb_server_post_result
-  when: fad_glb_server_existing_data.json.payload is undefined
+  when: fad_glb_server_existing_data.json.payload.mkey is undefined
   delegate_to: localhost
   changed_when: "fad_glb_server_post_result.json.payload == 0"
   failed_when: "fad_glb_server_post_result.json.payload != -15 and fad_glb_server_post_result.json.payload != 0"
