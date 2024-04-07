@@ -34,28 +34,6 @@
     - fad_glb_servers_members
     - debug
 
-# - name: Write GLB Server Member request body json tmp file ({{ fad_glb_servers_member_name }}).
-#   ansible.builtin.copy:
-#     content: |
-#       {
-#         "address-type": "{{ server_member.address_type }}",
-#         "gateway": "{{ server_member.gateway }}",
-#         "health_check_ctrl": "{{ server_member.health_check_ctrl }}",
-#         "health_check_inherit": "{{ server_member.health_check_inherit }}",
-#         "health_check_list": "{{ server_member.health_check_list }}",
-#         "health_check_relationship": "{{ server_member.health_check_relationship }}",
-#         "ip": "{{ server_member.ipv4 }}",
-#         "ip6": "{{ server_member.ipv6 }}",
-#         "mkey": "{{ server_member.name }}"
-#       }
-#     dest: "/tmp/fad_glb_server_members_{{ server_member.name }}_request_body.json"
-#     mode: u+rw,g-rw,o-rw
-#   register: request_body
-#   delegate_to: localhost
-#   run_once: true
-#   tags:
-#     - fad_glb_servers_members
-
 - name: Write GLB Server Member request body json for {{ fad_glb_server_member_name }}
   ansible.builtin.set_fact:
     request_body: |

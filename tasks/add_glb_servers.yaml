@@ -34,34 +34,6 @@
     - fad_glb_servers
     - debug
 
-# - name: Write GLB Server request body json tmp file for {{ fad_glb_server_name }}
-#   ansible.builtin.copy:
-#     content: |
-#       {
-#         "address-type": "{{ glb_server.address_type }}",
-#         "auth-type": "{{ glb_server.auth_type }}",
-#         "auto-sync": "{{ glb_server.auto_sync }}",
-#         "data-center": "{{ glb_server.data_center }}",
-#         "health_check_ctrl": "{{ glb_server.health_check_ctrl }}",
-#         "health_check_list": "{{ glb_server.health_check_list }}",
-#         "health_check_relationship": "{{ glb_server.health_check_relationship }}",
-#         "ip": "{{ glb_server.fad_ipv4 }}",
-#         "ip6": "{{ glb_server.fad_ipv6 }}",
-#         "mkey": "{{ glb_server.name }}",
-#         "password": "{{ glb_server.fad_pass }}",
-#         "port": "{{ glb_server.fad_port }}",
-#         "server-type": "{{ glb_server.server_type }}",
-#         "server_member": "",
-#         "server_member_count": ""
-#       }
-#     dest: "/tmp/fad_glb_server_{{ glb_server.name }}_request_body.json"
-#     mode: u+rw,g-rw,o-rw
-#   register: request_body
-#   delegate_to: localhost
-#   run_once: true
-#   tags:
-#     - fad_glb_servers
-
 - name: Write GLB Server request body template for {{ fad_glb_server_name }}
   ansible.builtin.set_fact:
     request_body: |
