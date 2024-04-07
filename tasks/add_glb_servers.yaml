@@ -5,14 +5,14 @@
   tags:
     - fad_glb_servers
 
-- name: Print out the GLB Server REST API endpoint ({{ fad_glb_server_name }}).
+- name: Print out the GLB Server REST API endpoint for {{ fad_glb_server_name }}
   ansible.builtin.debug:
     msg: "This FAD GLB Server REST API endpoint: {{ fad_api_endpoint_glb_server }}"
   tags:
     - fad_glb_servers
     - debug
 
-- name: Get the existing value of GLB Server entry ({{ fad_glb_server_name }}).
+- name: Get the existing value of GLB Server entry for {{ fad_glb_server_name }}
   ansible.builtin.uri:
     method: GET
     url: "{{ fad_api_endpoint_glb_server }}"
@@ -26,7 +26,7 @@
   tags:
     - fad_glb_servers
 
-- name: Print the existing value of GLB Server entry ({{ fad_glb_server_name }}).
+- name: Print the existing value of GLB Server entry for {{ fad_glb_server_name }}
   ansible.builtin.debug:
     var: fad_glb_server_existing_data.json.payload
   delegate_to: localhost
@@ -34,9 +34,37 @@
     - fad_glb_servers
     - debug
 
-- name: Write GLB Server request body json tmp file ({{ fad_glb_server_name }}).
-  ansible.builtin.copy:
-    content: |
+# - name: Write GLB Server request body json tmp file for {{ fad_glb_server_name }}
+#   ansible.builtin.copy:
+#     content: |
+#       {
+#         "address-type": "{{ glb_server.address_type }}",
+#         "auth-type": "{{ glb_server.auth_type }}",
+#         "auto-sync": "{{ glb_server.auto_sync }}",
+#         "data-center": "{{ glb_server.data_center }}",
+#         "health_check_ctrl": "{{ glb_server.health_check_ctrl }}",
+#         "health_check_list": "{{ glb_server.health_check_list }}",
+#         "health_check_relationship": "{{ glb_server.health_check_relationship }}",
+#         "ip": "{{ glb_server.fad_ipv4 }}",
+#         "ip6": "{{ glb_server.fad_ipv6 }}",
+#         "mkey": "{{ glb_server.name }}",
+#         "password": "{{ glb_server.fad_pass }}",
+#         "port": "{{ glb_server.fad_port }}",
+#         "server-type": "{{ glb_server.server_type }}",
+#         "server_member": "",
+#         "server_member_count": ""
+#       }
+#     dest: "/tmp/fad_glb_server_{{ glb_server.name }}_request_body.json"
+#     mode: u+rw,g-rw,o-rw
+#   register: request_body
+#   delegate_to: localhost
+#   run_once: true
+#   tags:
+#     - fad_glb_servers
+
+- name: Write GLB Server request body template for {{ fad_glb_server_name }}
+  ansible.builtin.set_fact:
+    request_body: |
       {
         "address-type": "{{ glb_server.address_type }}",
         "auth-type": "{{ glb_server.auth_type }}",
@@ -54,15 +82,17 @@
         "server_member": "",
         "server_member_count": ""
       }
-    dest: "/tmp/fad_glb_server_{{ glb_server.name }}_request_body.json"
-    mode: u+rw,g-rw,o-rw
-  register: request_body
-  delegate_to: localhost
-  run_once: true
+    tags:
+      - fad_glb_servers
+
+- name: Print out the GLB Server request body json for {{ fad_glb_server_name }}
+  ansible.builtin.debug:
+    var: request_body
   tags:
     - fad_glb_servers
+    - debug
 
-- name: Create new GLB Server entry if entry doesn't exist ({{ fad_glb_server_name }}).
+- name: Create new GLB Server entry if entry doesn't exist for {{ fad_glb_server_name }}
   ansible.builtin.uri:
     method: POST
     url: "{{ fad_api_endpoint_glb_server }}"
@@ -71,7 +101,7 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
+    body: "{{ request_body }}"
   register: fad_glb_server_post_result
   when: fad_glb_server_existing_data.json.payload.mkey is undefined
   delegate_to: localhost
@@ -80,7 +110,7 @@
   tags:
     - fad_glb_servers
 
-- name: Update the GLB Server entry if entry exist and idempotency check fail ({{ fad_glb_server_name }}).
+- name: Update the GLB Server entry if entry exist and idempotency check fail for {{ fad_glb_server_name }}
   ansible.builtin.uri:
     method: PUT
     url: "{{ fad_api_endpoint_glb_server }}"
@@ -89,7 +119,7 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
+    body: "{{ request_body }}"
   register: fad_glb_server_put_result
   delegate_to: localhost
   when: >
@@ -109,7 +139,7 @@
   tags:
     - fad_glb_servers
 
-- name: Include the FAD GLB Server members task ({{ fad_glb_server_name }}).
+- name: Include the FAD GLB Server members task for {{ fad_glb_server_name }}
   ansible.builtin.include_tasks: add_glb_servers_members.yaml
   loop: "{{ glb_server.server_members }}"
   loop_control:
@@ -118,7 +148,7 @@
     - fad_glb_servers
     - fad_glb_server_members
 
-- name: Check if the FAD GLB Server value has changed ({{ fad_glb_server_name }}).
+- name: Check if the FAD GLB Server value has changed for {{ fad_glb_server_name }}
   ansible.builtin.uri:
     method: GET
     url: "{{ fad_api_endpoint_glb_server }}"
@@ -133,7 +163,7 @@
   tags:
     - fad_glb_servers
 
-- name: Print the existing value of data center entry ({{ fad_glb_server_name }}).
+- name: Print the existing value of data center entry for {{ fad_glb_server_name }}
   ansible.builtin.debug:
     var: fad_glb_server_new_data.json
   delegate_to: localhost
