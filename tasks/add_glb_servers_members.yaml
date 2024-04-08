@@ -116,6 +116,7 @@
   delegate_to: localhost
   tags:
     - fad_glb_servers_members
+    - debug
 
 - name: Print the existing value of data center entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
