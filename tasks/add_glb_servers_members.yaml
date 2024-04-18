@@ -118,7 +118,7 @@
     - fad_glb_servers_members
     - debug
 
-- name: Print the existing value of data center entry ({{ fad_glb_servers_member_name }}).
+- name: Print the the current value of FAD GLB Server Member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     var: fad_server_member_new_data.json
   delegate_to: localhost
