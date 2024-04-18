@@ -34,7 +34,7 @@
     - fad_glb_servers_members
     - debug
 
-- name: Write GLB Server Member request body json for {{ fad_glb_server_member_name }}
+- name: Write GLB Server Member request body json for {{ fad_glb_servers_member_name }}
   ansible.builtin.set_fact:
     request_body: |
       {
@@ -51,7 +51,7 @@
   tags:
     - fad_glb_servers_members
 
-- name: Print out the value of request body json for {{ fad_glb_server_member_name }}
+- name: Print out the value of request body json for {{ fad_glb_servers_member_name }}
   ansible.builtin.set_fact:
     vars: request_body
   tags:
