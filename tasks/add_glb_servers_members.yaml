@@ -67,7 +67,7 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
+    body: "{{ request_body }}"
   register: fad_server_member_post_result
   when: fad_server_member_existing_data.json.payload.mkey is undefined
   delegate_to: localhost
@@ -85,7 +85,7 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
+    body: "{{ request_body }}"
   register: fad_server_member_put_result
   delegate_to: localhost
   when: >
