@@ -38,14 +38,14 @@
   ansible.builtin.set_fact:
     request_body: |
       {
-        "address-type": "{{ server_member.address_type }}",
-        "gateway": "{{ server_member.gateway }}",
-        "health_check_ctrl": "{{ server_member.health_check_ctrl }}",
-        "health_check_inherit": "{{ server_member.health_check_inherit }}",
-        "health_check_list": "{{ server_member.health_check_list }}",
-        "health_check_relationship": "{{ server_member.health_check_relationship }}",
+        "address-type": "{{ server_member.address_type | default('ipv4') }}",
+        "gateway": "{{ server_member.gateway | default('') }}",
+        "health_check_ctrl": "{{ server_member.health_check_ctrl | default('disable') }}",
+        "health_check_inherit": "{{ server_member.health_check_inherit | default('enable') }}",
+        "health_check_list": "{{ server_member.health_check_list | default('') }}",
+        "health_check_relationship": "{{ server_member.health_check_relationship | default('OR') }}",
         "ip": "{{ server_member.ipv4 }}",
-        "ip6": "{{ server_member.ipv6 }}",
+        "ip6": "{{ server_member.ipv6 | default('::') }}",
         "mkey": "{{ server_member.name }}"
       }
   tags:
@@ -90,14 +90,14 @@
   delegate_to: localhost
   when: >
     (fad_server_member_existing_data.json.payload.mkey is defined) and
-    (fad_server_member_existing_data.json.payload['address-type'] != server_member.address_type or
-    fad_server_member_existing_data.json.payload.gateway != server_member.gateway or
-    fad_server_member_existing_data.json.payload.health_check_ctrl != server_member.health_check_ctrl or
-    fad_server_member_existing_data.json.payload.health_check_inherit != server_member.health_check_inherit or
-    fad_server_member_existing_data.json.payload.health_check_list != server_member.health_check_list or
-    fad_server_member_existing_data.json.payload.health_check_relationship != server_member.health_check_relationship or
+    (fad_server_member_existing_data.json.payload['address-type'] != server_member.address_type | default('ipv4') or
+    fad_server_member_existing_data.json.payload.gateway != server_member.gateway | default('') or
+    fad_server_member_existing_data.json.payload.health_check_ctrl != server_member.health_check_ctrl | default('disable') or
+    fad_server_member_existing_data.json.payload.health_check_inherit != server_member.health_check_inherit | default('enable') or
+    fad_server_member_existing_data.json.payload.health_check_list != server_member.health_check_list | default('') or
+    fad_server_member_existing_data.json.payload.health_check_relationship != server_member.health_check_relationship | default('OR') or
     fad_server_member_existing_data.json.payload.ip != server_member.ipv4 or
-    fad_server_member_existing_data.json.payload.ip6 != server_member.ipv6)
+    fad_server_member_existing_data.json.payload.ip6 != server_member.ipv6 | default('::'))
   failed_when: "fad_server_member_put_result.json.payload != -15 and fad_server_member_put_result.json.payload != 0"
   tags:
     - fad_glb_servers_members
