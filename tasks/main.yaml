@@ -9,3 +9,4 @@
       loop: "{{ fad_glb_servers }}"
       loop_control:
         loop_var: glb_server
+        label: "{{ glb_server.name }}"

@@ -1,0 +1,93 @@
+---
+
+- name: Update/create FortiADC GLB Data Centers resources.
+  hosts: all
+  become: false
+  gather_facts: false
+  connection: local
+  vars:
+     # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.
+    do_cleanup: true
+    # global-load-balance servers entries
+    fad_glb_data_centers:
+      - name: dc1.ndkprd.com
+        location: ID
+      - name: dc2.ndkprd.com
+        location: ID
+      - name: dc3.ndkprd.com
+        location: ID
+    fad_glb_servers:
+      - name: "dmz.dc1.ndkprd.com"
+        data_center: "dc1.ndkprd.com"
+        health_check_ctrl: enable
+        health_check_list: "LB_HLTHCK_ICMP "
+        health_check_relationship: AND
+        server_type: Generic-Host
+        auth_type: none
+        address_type: ipv4 # FAD address type
+        auto_sync: disable
+        fad_ipv4: "0.0.0.0"
+        fad_ipv6: "::"
+        fad_pass: ""
+        fad_port: "5858"
+        server_members:
+          - name: public-waf-1.dmz.dc1.ndkprd.com
+            ipv4: 10.10.1.2
+            ipv6: "::"
+            address_type: ipv4
+            gateway: ""
+            health_check_ctrl: disable
+            health_check_inherit: enable
+            health_check_list: ""
+            health_check_relationship: "OR"
+          - name: public-waf-2.dmz.dc1.ndkprd.com
+            ipv4: 10.10.2.2
+            ipv6: "::"
+            address_type: ipv4
+            gateway: ""
+            health_check_ctrl: disable
+            health_check_inherit: enable
+            health_check_list: ""
+            health_check_relationship: "OR"
+
+  roles:
+    # uncomment below to test against ansible-galaxy
+    - ndkprd.fortiadc-glb-servers
+    # uncomment below to test against local (note: this will not pass ansible-lint)
+    # - ../../ansible-role-fortiadc-glb-servers
+
+  # clean-up tasks if you need to delete the resources you just create.
+  tasks:
+    - name: Clean up the created Servers resources.
+      ansible.builtin.uri:
+        method: DELETE
+        url: "https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ item.name }}"
+        body_format: "{{ fad_api_uri_params.body_format }}"
+        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        return_content: "{{ fad_api_uri_params.return_content }}"
+        status_code: "{{ fad_api_uri_params.status_code }}"
+        headers: "{{ fad_api_header }}"
+      register: fad_glb_dc_existing_data
+      when: do_cleanup == 'true' | bool | default('false')
+      loop: "{{ fad_glb_servers }}"
+      loop_control:
+        label: "{{ item.name }}"
+      tags:
+        - cleanup
+
+    - name: Clean up the created Data Centers resources.
+      ansible.builtin.uri:
+        method: DELETE
+        url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ item.name }}"
+        body_format: "{{ fad_api_uri_params.body_format }}"
+        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        return_content: "{{ fad_api_uri_params.return_content }}"
+        status_code: "{{ fad_api_uri_params.status_code }}"
+        headers: "{{ fad_api_header }}"
+      register: fad_glb_dc_existing_data
+      when: do_cleanup == 'true' | bool | default('false')
+      loop: "{{ fad_glb_data_centers }}"
+      loop_control:
+        label: "{{ item.name }}"
+      tags:
+        - cleanup

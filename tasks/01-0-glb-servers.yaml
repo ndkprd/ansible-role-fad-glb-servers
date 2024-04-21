@@ -1,7 +1,13 @@
-- name: Set FAD GLB Server REST API endpoint vars ({{ glb_server.name }}).
+- name: Set FAD GLB Server REST API endpoint and vars for {{ glb_server.name }}
   ansible.builtin.set_fact:
-    fad_api_endpoint_glb_server: https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ glb_server.name }}
-    fad_glb_server_name: "{{ glb_server.data_center }}/{{ glb_server.name }}"
+    fad_api_endpoint_glb_server: "https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ glb_server.name }}"
+    fad_glb_server_name: "{{ glb_server.name + ' of ' + glb_server.data_center }}"
+    fad_glb_server_existing_data: >
+      {{
+      (lookup('url', 'https://%s/api/global_load_balance_servers?vdom=%s&mkey=%s'
+       % (ansible_host, fad_vdom, glb_server.name), validate_certs=false, split_lines=false,
+       headers=fad_api_header) | from_json).get('payload')
+       }}
     fad_glb_server_request_body:
       {
         "address-type": "{{ glb_server.address_type | default('ipv4)') }}",
@@ -21,32 +27,13 @@
         "server_member_count": ""
       }
 
-- name: Print out the GLB Server REST API endpoint for {{ fad_glb_server_name }}
+- name: Print out the created endpoint and vars for {{ fad_glb_server_name }}
   ansible.builtin.debug:
-    msg: "This FAD GLB Server REST API endpoint: {{ fad_api_endpoint_glb_server }}"
-  tags:
-    - debug
-
-- name: Get the existing value of GLB Server entry for {{ fad_glb_server_name }}
-  ansible.builtin.uri:
-    method: GET
-    url: "{{ fad_api_endpoint_glb_server }}"
-    body_format: "{{ fad_api_uri_params.body_format }}"
-    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-    return_content: "{{ fad_api_uri_params.return_content }}"
-    status_code: "{{ fad_api_uri_params.status_code }}"
-    headers: "{{ fad_api_header }}"
-  register: fad_glb_server_existing_data
-
-- name: Print the existing value of GLB Server entry for {{ fad_glb_server_name }}
-  ansible.builtin.debug:
-    var: fad_glb_server_existing_data.json.payload
-  tags:
-    - debug
-
-- name: Print out the GLB Server request body json for {{ fad_glb_server_name }}
-  ansible.builtin.debug:
-    var: request_body
+    msg:
+      - fad_api_endpoint_glb_server: "{{ fad_api_endpoint_glb_server }}"
+      - fad_glb_server_name: "{{ fad_glb_server_name }}"
+      - fad_glb_server_existing_data: "{{ fad_glb_server_existing_data }}"
+      - fad_glb_server_request_body: "{{ fad_glb_server_request_body }}"
   tags:
     - debug
 
@@ -61,7 +48,7 @@
     headers: "{{ fad_api_header }}"
     body: "{{ fad_glb_server_request_body }}"
   register: fad_glb_server_post_result
-  when: fad_glb_server_existing_data.json.payload.mkey is undefined
+  when: fad_glb_server_existing_data.mkey is undefined
   changed_when: "fad_glb_server_post_result.json.payload == 0"
   failed_when: "fad_glb_server_post_result.json.payload != -15 and fad_glb_server_post_result.json.payload != 0"
 
@@ -77,22 +64,23 @@
     body: "{{ fad_glb_server_request_body }}"
   register: fad_glb_server_put_result
   when: >
-    (fad_glb_server_existing_data.json.payload.mkey is defined) and
+    (fad_glb_server_existing_data.mkey is defined) and
     (
-    fad_glb_server_existing_data.json.payload['auth-type'] != glb_server.auth_type | default('none') or
-    fad_glb_server_existing_data.json.payload['auto-sync'] != glb_server.auto_sync | default('disable') or
-    fad_glb_server_existing_data.json.payload['data-center'] != glb_server.data_center or
-    fad_glb_server_existing_data.json.payload.health_check_ctrl != glb_server.health_check_ctrl | default('enable') or
-    fad_glb_server_existing_data.json.payload.health_check_list != glb_server.health_check_list | default('LB_HLTHCK_ICMP ') or
-    fad_glb_server_existing_data.json.payload.health_check_relationship != glb_server.health_check_relationship | default('AND') or
-    fad_glb_server_existing_data.json.payload.ip != glb_server.fad_ipv4 | default('0.0.0.0') | string or
-    fad_glb_server_existing_data.json.payload.ip6 != glb_server.fad_ipv6 | default('::') | string or
-    fad_glb_server_existing_data.json.payload.password != glb_server.fad_pass | default('') or
-    fad_glb_server_existing_data.json.payload.port != glb_server.fad_port | default('5858') or
-    fad_glb_server_existing_data.json.payload['server-type'] != glb_server.server_type | default('Generic-Host') or
-    fad_glb_server_existing_data.json.payload['address-type'] != glb_server.address_type | default('ipv4')
+    fad_glb_server_existing_data['auth-type'] != glb_server.auth_type | default('none') or
+    fad_glb_server_existing_data['auto-sync'] != glb_server.auto_sync | default('disable') or
+    fad_glb_server_existing_data['data-center'] != glb_server.data_center or
+    fad_glb_server_existing_data.health_check_ctrl != glb_server.health_check_ctrl | default('enable') or
+    fad_glb_server_existing_data.health_check_list != glb_server.health_check_list | default('LB_HLTHCK_ICMP ') or
+    fad_glb_server_existing_data.health_check_relationship != glb_server.health_check_relationship | default('AND') or
+    fad_glb_server_existing_data.ip != glb_server.fad_ipv4 | default('0.0.0.0') | string or
+    fad_glb_server_existing_data.ip6 != glb_server.fad_ipv6 | default('::') | string or
+    fad_glb_server_existing_data.password != glb_server.fad_pass | default('') or
+    fad_glb_server_existing_data.port != glb_server.fad_port | default('5858') or
+    fad_glb_server_existing_data['server-type'] != glb_server.server_type | default('Generic-Host') or
+    fad_glb_server_existing_data['address-type'] != glb_server.address_type | default('ipv4')
     )
   failed_when: "fad_glb_server_put_result.json.payload != -15 and fad_glb_server_put_result.json.payload != 0"
+  changed_when: "fad_glb_server_put_result.json.payload == 0"
 
 - name: Include the FAD GLB Server members task for {{ fad_glb_server_name }}
   tags:
@@ -103,23 +91,21 @@
       loop: "{{ glb_server.server_members }}"
       loop_control:
         loop_var: server_member
+        label: "{{ server_member.name }}"
 
-- name: Check if the FAD GLB Server value has changed for {{ fad_glb_server_name }}
-  ansible.builtin.uri:
-    method: GET
-    url: "{{ fad_api_endpoint_glb_server }}"
-    body_format: "{{ fad_api_uri_params.body_format }}"
-    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-    return_content: "{{ fad_api_uri_params.return_content }}"
-    status_code: "{{ fad_api_uri_params.status_code }}"
-    headers: "{{ fad_api_header }}"
-  register: fad_glb_server_new_data
-  changed_when: "fad_glb_server_new_data.json.payload != fad_glb_server_existing_data.json.payload"
-  tags:
-    - debug
-
-- name: Print the existing value of data center entry for {{ fad_glb_server_name }}
+- name: If data has changed, print the new value of GLB Server entry for {{ fad_glb_server_name }}
   ansible.builtin.debug:
-    var: fad_glb_server_new_data.json
+    msg:
+      fad_glb_server_new_data: >
+        "{{
+        (lookup('url', 'https://%s/api/global_load_balance_servers?vdom=%s&mkey=%s'
+        % (ansible_host, fad_vdom, glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')
+        }}"
+  when: >
+    (lookup('url', 'https://%s/api/global_load_balance_servers?vdom=%s&mkey=%s'
+     % (ansible_host, fad_vdom, glb_server.name), validate_certs=false, split_lines=false,
+     headers=fad_api_header) | from_json).get('payload') != fad_glb_server_existing_data
+  run_once: true
   tags:
     - debug
