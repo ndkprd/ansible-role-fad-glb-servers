@@ -4,8 +4,8 @@ fad_vdom: root
 fad_glb_data_centers:
   - name: hq.ndkprd.com  # Data Center name/mkey
     location: ID  # 2 letters country ID
-  - name: dc1.ndkprd.com    
-    location: ID     
+  - name: dc1.ndkprd.com
+    location: ID
   - name: dc2.ndkprd.com
     location: ID
 
@@ -14,7 +14,7 @@ fad_glb_servers:
     data_center: "hq.ndkprd.com" # Data Center name, must exists first
     health_check_ctrl: enable
     health_check_list: "LB_HLTHCK_ICMP " # the whitespace is a must
-    health_check_relationship: AND      
+    health_check_relationship: AND
     server_type: Generic-Host # "Generic-Host" or "FortiADC-SLB"
     auth_type: none # Only for FortiADC-SLB
     address_type: ipv4 # FAD address type
@@ -40,7 +40,7 @@ fad_glb_servers:
     fad_port: "5858"
     server_members:
       - name: public-waf-1.dmz.dc1.ndkprd.com
-        ipv4: 36.92.152.196
+        ipv4: 10.10.1.1
         ipv6: "::"
         address_type: ipv4
         gateway: ""
@@ -49,7 +49,7 @@ fad_glb_servers:
         health_check_list: ""
         health_check_relationship: ""
       - name: public-waf-2.dmz.dc1.ndkprd.com
-        ipv4: 114.5.127.186
+        ipv4: 10.10.2.1
         ipv6: "::"
         address_type: ipv4
         gateway: ""
@@ -73,7 +73,7 @@ fad_glb_servers:
     fad_port: "5858"
     server_members:
       - name: public-waf-1.dmz.dc2.ndkprd.com
-        ipv4: 114.5.119.176
+        ipv4: 10.20.1.1
         ipv6: "::"
         address_type: ipv4
         gateway: ""
