@@ -1,8 +1,8 @@
 - name: Set FAD GLB Server Member REST API endpoint vars ({{ server_member.name }}).
   ansible.builtin.set_fact:
     fad_api_endpoint_server_members:
-      https://{{ ansible_host }}/api/global_load_balance_servers_child_virtual_server_list?\
-      vdom={{ fad_vdom }}&pkey={{ glb_server.name }}&mkey={{ server_member.name }}
+      "https://{{ ansible_host }}/api/global_load_balance_servers_child_virtual_server_list?\
+      vdom={{ fad_vdom }}&pkey={{ glb_server.name }}&mkey={{ server_member.name }}"
     fad_glb_servers_member_name: "{{ glb_server.data_center }}/{{ glb_server.name }}/{{ server_member.name }}"
     fad_glb_server_member_request_body: |
       {
