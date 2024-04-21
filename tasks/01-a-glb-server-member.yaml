@@ -16,14 +16,11 @@
         "ip6": "{{ server_member.ipv6 | default('::') }}",
         "mkey": "{{ server_member.name }}"
       }
-  tags:
-    - fad_glb_servers_members
 
 - name: Print out the GLB Server Member REST API endpoint ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     msg: "This FAD GLB Server Member REST API endpoint: {{ fad_api_endpoint_server_members }}"
   tags:
-    - fad_glb_servers_members
     - debug
 
 - name: Get the existing value of GLB Server Member entry ({{ fad_glb_servers_member_name }}).
@@ -36,21 +33,17 @@
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
   register: fad_server_member_existing_data
-  tags:
-    - fad_glb_servers_members
 
 - name: Print the existing value of GLB Server Member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     var: fad_server_member_existing_data.json.payload
   tags:
-    - fad_glb_servers_members
     - debug
 
 - name: Print out the value of request body json for {{ fad_glb_servers_member_name }}
   ansible.builtin.debug:
     var: fad_glb_server_member_request_body
   tags:
-    - fad_glb_servers_members
     - debug
 
 - name: Create new GLB Server Member entry if entry doesn't exist ({{ fad_glb_servers_member_name }}).
@@ -67,8 +60,6 @@
   when: fad_server_member_existing_data.json.payload.mkey is undefined
   changed_when: "fad_server_member_post_result.json.payload == 0"
   failed_when: "fad_server_member_post_result.json.payload != -15 and fad_server_member_post_result.json.payload != 0"
-  tags:
-    - fad_glb_servers_members
 
 - name: Update the GLB Server Member entry if entry exist and idempotent check fail ({{ fad_glb_servers_member_name }}).
   ansible.builtin.uri:
@@ -92,8 +83,6 @@
     fad_server_member_existing_data.json.payload.ip != server_member.ipv4 or
     fad_server_member_existing_data.json.payload.ip6 != server_member.ipv6 | default('::'))
   failed_when: "fad_server_member_put_result.json.payload != -15 and fad_server_member_put_result.json.payload != 0"
-  tags:
-    - fad_glb_servers_members
 
 - name: Check if the FAD GLB Server Member values has changed ({{ fad_glb_servers_member_name }}).
   ansible.builtin.uri:
@@ -107,12 +96,10 @@
   register: fad_server_member_new_data
   changed_when: "fad_server_member_new_data.json.payload != fad_server_member_existing_data.json.payload"
   tags:
-    - fad_glb_servers_members
     - debug
 
 - name: Print the the current value of FAD GLB Server Member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     var: fad_server_member_new_data.json
   tags:
-    - fad_glb_servers_members
     - debug
