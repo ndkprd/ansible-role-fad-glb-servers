@@ -106,6 +106,5 @@
     (lookup('url', 'https://%s/api/global_load_balance_servers?vdom=%s&mkey=%s'
      % (ansible_host, fad_vdom, glb_server.name), validate_certs=false, split_lines=false,
      headers=fad_api_header) | from_json).get('payload') != fad_glb_server_existing_data
-  run_once: true
   tags:
     - debug
