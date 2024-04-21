@@ -58,6 +58,21 @@
 
   # clean-up tasks if you need to delete the resources you just create.
   tasks:
+    - name: Clean up the created Servers resources.
+      ansible.builtin.uri:
+        method: DELETE
+        url: "https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ item.name }}"
+        body_format: "{{ fad_api_uri_params.body_format }}"
+        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        return_content: "{{ fad_api_uri_params.return_content }}"
+        status_code: "{{ fad_api_uri_params.status_code }}"
+        headers: "{{ fad_api_header }}"
+      register: fad_glb_dc_existing_data
+      when: do_cleanup == 'true' | bool | default('false')
+      loop: "{{ fad_glb_servers }}"
+      tags:
+        - cleanup
+
     - name: Clean up the created Data Centers resources.
       ansible.builtin.uri:
         method: DELETE
@@ -73,17 +88,3 @@
       tags:
         - cleanup
 
-    - name: Clean up the created Servers resources.
-      ansible.builtin.uri:
-        method: DELETE
-        url: "https://{{ ansible_host }}/api/global_load_balance_servers?vdom={{ fad_vdom }}&mkey={{ item.name }}"
-        body_format: "{{ fad_api_uri_params.body_format }}"
-        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-        return_content: "{{ fad_api_uri_params.return_content }}"
-        status_code: "{{ fad_api_uri_params.status_code }}"
-        headers: "{{ fad_api_header }}"
-      register: fad_glb_dc_existing_data
-      when: do_cleanup == 'true' | bool | default('false')
-      loop: "{{ fad_glb_servers }}"
-      tags:
-        - cleanup
