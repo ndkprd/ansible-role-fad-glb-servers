@@ -32,29 +32,29 @@
         fad_port: "5858"
         server_members:
           - name: public-waf-1.dmz.dc1.ndkprd.com
-            ipv4: 10.10.1.1
+            ipv4: 10.10.1.2
             ipv6: "::"
             address_type: ipv4
             gateway: ""
-            health_check_ctrl: ""
+            health_check_ctrl: disable
             health_check_inherit: enable
             health_check_list: ""
-            health_check_relationship: ""
+            health_check_relationship: "OR"
           - name: public-waf-2.dmz.dc1.ndkprd.com
-            ipv4: 10.10.2.1
+            ipv4: 10.10.2.2
             ipv6: "::"
             address_type: ipv4
             gateway: ""
-            health_check_ctrl: ""
+            health_check_ctrl: disable
             health_check_inherit: enable
             health_check_list: ""
-            health_check_relationship: ""
+            health_check_relationship: "OR"
 
   roles:
     # uncomment below to test against ansible-galaxy
-    # - ndkprd.fortiadc-glb-servers
+    - ndkprd.fortiadc-glb-servers
     # uncomment below to test against local (note: this will not pass ansible-lint)
-    - ../../ansible-role-fortiadc-glb-servers
+    # - ../../ansible-role-fortiadc-glb-servers
 
   # clean-up tasks if you need to delete the resources you just create.
   tasks:
@@ -70,6 +70,8 @@
       register: fad_glb_dc_existing_data
       when: do_cleanup == 'true' | bool | default('false')
       loop: "{{ fad_glb_servers }}"
+      loop_control:
+        label: "{{ item.name }}"
       tags:
         - cleanup
 
@@ -85,6 +87,7 @@
       register: fad_glb_dc_existing_data
       when: do_cleanup == 'true' | bool | default('false')
       loop: "{{ fad_glb_data_centers }}"
+      loop_control:
+        label: "{{ item.name }}"
       tags:
         - cleanup
-
