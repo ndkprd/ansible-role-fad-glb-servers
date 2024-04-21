@@ -91,7 +91,7 @@
       loop: "{{ glb_server.server_members }}"
       loop_control:
         loop_var: server_member
-        label: "{{ server_member.name }}"
+        label: "{{ server_member.name + ' for ' + glb_server.name }}"
 
 - name: If data has changed, print the new value of GLB Server entry for {{ fad_glb_server_name }}
   ansible.builtin.debug:
