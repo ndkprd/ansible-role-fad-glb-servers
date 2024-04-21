@@ -1,7 +1,21 @@
 - name: Set FAD GLB Server Member REST API endpoint vars ({{ server_member.name }}).
   ansible.builtin.set_fact:
-    fad_api_endpoint_server_members: https://{{ ansible_host }}/api/global_load_balance_servers_child_virtual_server_list?vdom={{ fad_vdom }}&pkey={{ glb_server.name }}&mkey={{ server_member.name }}
+    fad_api_endpoint_server_members:
+      https://{{ ansible_host }}/api/global_load_balance_servers_child_virtual_server_list?\
+      vdom={{ fad_vdom }}&pkey={{ glb_server.name }}&mkey={{ server_member.name }}
     fad_glb_servers_member_name: "{{ glb_server.data_center }}/{{ glb_server.name }}/{{ server_member.name }}"
+    fad_glb_server_member_request_body: |
+      {
+        "address-type": "{{ server_member.address_type | default('ipv4') }}",
+        "gateway": "{{ server_member.gateway | default('') }}",
+        "health_check_ctrl": "{{ server_member.health_check_ctrl | default('disable') }}",
+        "health_check_inherit": "{{ server_member.health_check_inherit | default('enable') }}",
+        "health_check_list": "{{ server_member.health_check_list | default('') }}",
+        "health_check_relationship": "{{ server_member.health_check_relationship | default('OR') }}",
+        "ip": "{{ server_member.ipv4 }}",
+        "ip6": "{{ server_member.ipv6 | default('::') }}",
+        "mkey": "{{ server_member.name }}"
+      }
   tags:
     - fad_glb_servers_members
 
@@ -22,38 +36,19 @@
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
   register: fad_server_member_existing_data
-  delegate_to: localhost
   tags:
     - fad_glb_servers_members
 
 - name: Print the existing value of GLB Server Member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     var: fad_server_member_existing_data.json.payload
-  delegate_to: localhost
   tags:
     - fad_glb_servers_members
     - debug
 
-- name: Write GLB Server Member request body json for {{ fad_glb_servers_member_name }}
-  ansible.builtin.set_fact:
-    request_body: |
-      {
-        "address-type": "{{ server_member.address_type | default('ipv4') }}",
-        "gateway": "{{ server_member.gateway | default('') }}",
-        "health_check_ctrl": "{{ server_member.health_check_ctrl | default('disable') }}",
-        "health_check_inherit": "{{ server_member.health_check_inherit | default('enable') }}",
-        "health_check_list": "{{ server_member.health_check_list | default('') }}",
-        "health_check_relationship": "{{ server_member.health_check_relationship | default('OR') }}",
-        "ip": "{{ server_member.ipv4 }}",
-        "ip6": "{{ server_member.ipv6 | default('::') }}",
-        "mkey": "{{ server_member.name }}"
-      }
-  tags:
-    - fad_glb_servers_members
-
 - name: Print out the value of request body json for {{ fad_glb_servers_member_name }}
-  ansible.builtin.set_fact:
-    vars: request_body
+  ansible.builtin.debug:
+    var: fad_glb_server_member_request_body
   tags:
     - fad_glb_servers_members
     - debug
@@ -67,10 +62,9 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ request_body }}"
+    body: "{{ fad_glb_server_member_request_body }}"
   register: fad_server_member_post_result
   when: fad_server_member_existing_data.json.payload.mkey is undefined
-  delegate_to: localhost
   changed_when: "fad_server_member_post_result.json.payload == 0"
   failed_when: "fad_server_member_post_result.json.payload != -15 and fad_server_member_post_result.json.payload != 0"
   tags:
@@ -85,9 +79,8 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ request_body }}"
+    body: "{{ fad_glb_server_member_request_body }}"
   register: fad_server_member_put_result
-  delegate_to: localhost
   when: >
     (fad_server_member_existing_data.json.payload.mkey is defined) and
     (fad_server_member_existing_data.json.payload['address-type'] != server_member.address_type | default('ipv4') or
@@ -113,7 +106,6 @@
     headers: "{{ fad_api_header }}"
   register: fad_server_member_new_data
   changed_when: "fad_server_member_new_data.json.payload != fad_server_member_existing_data.json.payload"
-  delegate_to: localhost
   tags:
     - fad_glb_servers_members
     - debug
@@ -121,7 +113,6 @@
 - name: Print the the current value of FAD GLB Server Member entry ({{ fad_glb_servers_member_name }}).
   ansible.builtin.debug:
     var: fad_server_member_new_data.json
-  delegate_to: localhost
   tags:
     - fad_glb_servers_members
     - debug

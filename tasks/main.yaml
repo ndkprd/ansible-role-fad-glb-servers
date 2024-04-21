@@ -1,14 +1,11 @@
 ---
 
-# - name: Add/update GLB Data Centers using role.
-#   ansible.builtin.include_role:
-#     name: ndkprd.fortiadc-glb-data-center
-# I don't know that dependencies are automatically run, lol.
-
 - name: Create/update GLB Servers and Server Members.
-  ansible.builtin.include_tasks: add_glb_servers.yaml
-  loop: "{{ fad_glb_servers }}"
-  loop_control:
-    loop_var: glb_server
   tags:
     - fad_glb_servers
+  block:
+    - name: Create/update GLB Servers and Server Members.
+      ansible.builtin.include_tasks: 01-0-glb-servers.yaml
+      loop: "{{ fad_glb_servers }}"
+      loop_control:
+        loop_var: glb_server
