@@ -128,7 +128,6 @@
         % (glb_server.name), validate_certs=false, split_lines=false,
         headers=fad_api_header) | from_json).get('payload')['address-type'] != glb_server.address_type | default('ipv4')
         )
-      ignore_errors: true
       changed_when: "fad_glb_server_put_results.json.payload == 0"
       failed_when: "fad_glb_server_put_results.json.payload != 0 and fad_glb_server_put_results.json.payload != -15"
 
