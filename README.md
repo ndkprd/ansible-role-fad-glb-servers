@@ -4,7 +4,7 @@
 
 Ansible role to create/update Fortinet's FortiADC GLB Servers and its members using REST API. 
 
-Since the GLB Servers need the Data Centers to be exist first, it depends on my other role: [ndkprd.fortiadc-glb-data-center](https://github.com/ndkprd/ansible-role-fortiadc-glb-data-center).
+Since the GLB Servers need the Data Centers to be exist first, it depends on my other role: [ndkprd.fortiadc-glb-data-centers](https://github.com/ndkprd/ansible-role-fortiadc-glb-data-centers).
 
 ## Usage
 
@@ -154,7 +154,7 @@ I added quiet lots of debug task, mainly to check if the variable I set is corre
 
 For example, if you're using CLI, you can just go `ansible-playbook playbook.yaml --skip-tags debug`.
 
-If you don't need to run the Data Center role, you can also skip tasks tagged with `fad_glb_dc`.
+If you don't need to run the Data Center role, you can also skip tasks tagged with `fad_glb_data_centers`.
 
 ## Limitation
 
