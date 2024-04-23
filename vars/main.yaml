@@ -1,5 +1,12 @@
 ---
 
+fad_base_url: "https://{{ ansible_host }}/api"
+
+fad_endpoint:
+  glb_data_center: "/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey=%s"
+  glb_servers: "/global_load_balance_servers?vdom={{ fad_vdom }}&mkey=%s"
+  glb_server_member: "/global_load_balance_servers_child_virtual_server_list?vdom={{ fad_vdom }}&pkey=%s&mkey=%s"
+
 fad_api_uri_params:
   body_format: json
   validate_certs: false

@@ -1,12 +1,274 @@
 ---
 
-- name: Create/update GLB Servers and Server Members.
-  tags:
-    - fad_glb_servers
+- name: Create/update GLB Servers entries.
+  tags: [fad_glb_servers]
+  vars:
+    fad_glb_servers_api_endpoint: "{{ fad_base_url + fad_endpoint.glb_servers }}"
   block:
-    - name: Create/update GLB Servers and Server Members.
-      ansible.builtin.include_tasks: 01-0-glb-servers.yaml
+
+    - name: Print out the GLB Servers existing values.
+      ansible.builtin.debug:
+        msg: >
+          {{ (lookup('url', fad_glb_servers_api_endpoint
+          % (glb_server.name), validate_certs=false, split_lines=false, headers=fad_api_header) | from_json).get('payload') }}
       loop: "{{ fad_glb_servers }}"
       loop_control:
         loop_var: glb_server
         label: "{{ glb_server.name }}"
+      tags: [debug]
+
+    - name: Create new GLB Servers entry if it's not found.
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ fad_glb_servers_api_endpoint | format(glb_server.name) }}"
+        body_format: "{{ fad_api_uri_params.body_format }}"
+        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        return_content: "{{ fad_api_uri_params.return_content }}"
+        status_code: "{{ fad_api_uri_params.status_code }}"
+        headers: "{{ fad_api_header }}"
+        body: |
+          {
+            "address-type": "{{ glb_server.address_type | default('ipv4)') }}",
+            "auth-type": "{{ glb_server.auth_type | default('none') }}",
+            "auto-sync": "{{ glb_server.auto_sync | default('disable') }}",
+            "data-center": "{{ glb_server.data_center | mandatory }}",
+            "health_check_ctrl": "{{ glb_server.health_check_ctrl | default('enable') }}",
+            "health_check_list": "{{ glb_server.health_check_list | default('LB_HLTHCK_ICMP ') }}",
+            "health_check_relationship": "{{ glb_server.health_check_relationship | default('AND') }}",
+            "ip": "{{ glb_server.fad_ipv4 | default('0.0.0.0') | string }}",
+            "ip6": "{{ glb_server.fad_ipv6 | default('::') | string }}",
+            "mkey": "{{ glb_server.name | string }}",
+            "password": "{{ glb_server.fad_pass | default('') }}",
+            "port": "{{ glb_server.fad_port | default('5858') }}",
+            "server-type": "{{ glb_server.server_type | default('Generic-Host') }}"
+          }
+      register: fad_glb_server_post_results
+      loop: "{{ fad_glb_servers }}"
+      loop_control:
+        loop_var: glb_server
+        label: "{{ glb_server.name }}"
+      when: >
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').mkey is undefined
+      changed_when: "fad_glb_server_post_results.json.payload == 0"
+      failed_when: fad_glb_server_post_results.json.payload not in [0, -15]
+
+    - name: Update GLB Server entry if it's exist and any of its value is changed.
+      ansible.builtin.uri:
+        method: PUT
+        url: "{{ fad_glb_servers_api_endpoint | format(glb_server.name) }}"
+        body_format: "{{ fad_api_uri_params.body_format }}"
+        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        return_content: "{{ fad_api_uri_params.return_content }}"
+        status_code: "{{ fad_api_uri_params.status_code }}"
+        headers: "{{ fad_api_header }}"
+        body: |
+          {
+            "address-type": "{{ glb_server.address_type | default('ipv4)') }}",
+            "auth-type": "{{ glb_server.auth_type | default('none') }}",
+            "auto-sync": "{{ glb_server.auto_sync | default('disable') }}",
+            "data-center": "{{ glb_server.data_center }}",
+            "health_check_ctrl": "{{ glb_server.health_check_ctrl | default('enable') }}",
+            "health_check_list": "{{ glb_server.health_check_list | default('LB_HLTHCK_ICMP ') }}",
+            "health_check_relationship": "{{ glb_server.health_check_relationship | default('AND') }}",
+            "ip": "{{ glb_server.fad_ipv4 | default('0.0.0.0') | string }}",
+            "ip6": "{{ glb_server.fad_ipv6 | default('::') | string }}",
+            "mkey": "{{ glb_server.name | string }}",
+            "password": "{{ glb_server.fad_pass | default('') }}",
+            "port": "{{ glb_server.fad_port | default('5858') }}",
+            "server-type": "{{ glb_server.server_type | default('Generic-Host') }}",
+            "server_member": "",
+            "server_member_count": ""
+          }
+      register: fad_glb_server_put_results
+      loop: "{{ fad_glb_servers }}"
+      loop_control:
+        loop_var: glb_server
+        label: "{{ glb_server.name }}"
+      when: >
+        ((lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').mkey is defined) and
+        (
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')['auth-type'] != glb_server.auth_type | default('none') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')['auto-sync'] != glb_server.auto_sync | default('disable') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')['data-center'] != glb_server.data_center or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').health_check_ctrl != glb_server.health_check_ctrl | default('enable') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').health_check_list != glb_server.health_check_list | default('LB_HLTHCK_ICMP ') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').health_check_relationship != glb_server.health_check_relationship | default('AND') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').ip != glb_server.fad_ipv4 | default('0.0.0.0') | string or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').ip6 != glb_server.fad_ipv6 | default('::') | string or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').password != glb_server.fad_pass | default('') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload').port != glb_server.fad_port | default('5858') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')['server-type'] != glb_server.server_type | default('Generic-Host') or
+        (lookup('url', fad_glb_servers_api_endpoint
+        % (glb_server.name), validate_certs=false, split_lines=false,
+        headers=fad_api_header) | from_json).get('payload')['address-type'] != glb_server.address_type | default('ipv4')
+        )
+      ignore_errors: true
+      changed_when: "fad_glb_server_put_results.json.payload == 0"
+      failed_when: "fad_glb_server_put_results.json.payload != 0 and fad_glb_server_put_results.json.payload != -15"
+
+    - name: Print out the GLB Servers values after create/update task.
+      ansible.builtin.debug:
+        msg: >
+          {{ (lookup('url', fad_glb_servers_api_endpoint
+          % (glb_server.name), validate_certs=false, split_lines=false, headers=fad_api_header) | from_json).get('payload') }}
+      loop: "{{ fad_glb_servers }}"
+      loop_control:
+        loop_var: glb_server
+        label: "{{ glb_server.name }}"
+      tags: [debug]
+
+    - name: Create/update GLB Server Member entries.
+      vars:
+        fad_glb_server_member_api_endpoint: "{{ fad_base_url + fad_endpoint.glb_server_member }}"
+      tags: [fad_glb_server_members]
+      block:
+
+        - name: Print out the GLB Server Member existing values.
+          ansible.builtin.debug:
+            msg: >
+              {{ (lookup('url', fad_glb_server_member_api_endpoint
+              % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+              headers=fad_api_header) | from_json).get('payload') }}
+          loop: "{{ fad_glb_servers | subelements('server_members') }}"
+          loop_control:
+            loop_var: glb_server
+            label: "{{ glb_server.1.name + ' of ' + glb_server.0.name }}"
+          tags: [debug]
+
+        - name: Create new GLB Server Member entry if it's not found.
+          ansible.builtin.uri:
+            method: POST
+            url: "{{ fad_glb_server_member_api_endpoint | format(glb_server.0.name, glb_server.1.name) }}"
+            body_format: "{{ fad_api_uri_params.body_format }}"
+            validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+            return_content: "{{ fad_api_uri_params.return_content }}"
+            status_code: "{{ fad_api_uri_params.status_code }}"
+            headers: "{{ fad_api_header }}"
+            body: |
+              {
+                "address-type": "{{ glb_server.1.address_type | default('ipv4') }}",
+                "gateway": "{{ glb_server.1.gateway | default('') }}",
+                "health_check_ctrl": "{{ glb_server.1.health_check_ctrl | default('disable') }}",
+                "health_check_inherit": "{{ glb_server.1.health_check_inherit | default('enable') }}",
+                "health_check_list": "{{ glb_server.1.health_check_list | default('') }}",
+                "health_check_relationship": "{{ glb_server.1.health_check_relationship | default('OR') }}",
+                "ip": "{{ glb_server.1.ipv4 }}",
+                "ip6": "{{ glb_server.1.ipv6 | default('::') }}",
+                "mkey": "{{ glb_server.1.name }}"
+              }
+          register: fad_glb_server_member_post_results
+          loop: "{{ fad_glb_servers | subelements('server_members') }}"
+          loop_control:
+            loop_var: glb_server
+            label: "{{ glb_server.1.name + ' of ' + glb_server.0.name }}"
+          when: >
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name),validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').mkey is undefined
+          changed_when: "fad_glb_server_member_post_results.json.payload == 0"
+          failed_when: "fad_glb_server_member_post_results.json.payload not in [0, -15]"
+
+        - name: Update GLB Server Member entry if it's exist and any of its value is changed.
+          ansible.builtin.uri:
+            method: PUT
+            url: "{{ fad_glb_server_member_api_endpoint | format(glb_server.0.name, glb_server.1.name) }}"
+            body_format: "{{ fad_api_uri_params.body_format }}"
+            validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+            return_content: "{{ fad_api_uri_params.return_content }}"
+            status_code: "{{ fad_api_uri_params.status_code }}"
+            headers: "{{ fad_api_header }}"
+            body: |
+              {
+                "address-type": "{{ glb_server.1.address_type | default('ipv4') }}",
+                "gateway": "{{ glb_server.1.gateway | default('') }}",
+                "health_check_ctrl": "{{ glb_server.1.health_check_ctrl | default('disable') }}",
+                "health_check_inherit": "{{ glb_server.1.health_check_inherit | default('enable') }}",
+                "health_check_list": "{{ glb_server.1.health_check_list | default('') }}",
+                "health_check_relationship": "{{ glb_server.1.health_check_relationship | default('OR') }}",
+                "ip": "{{ glb_server.1.ipv4 }}",
+                "ip6": "{{ glb_server.1.ipv6 | default('::') }}",
+                "mkey": "{{ glb_server.1.name }}"
+              }
+          register: fad_glb_server_member_put_results
+          loop: "{{ fad_glb_servers | subelements('server_members') }}"
+          loop_control:
+            loop_var: glb_server
+            label: "{{ glb_server.1.name + ' of ' + glb_server.0.name }}"
+          when: >
+            ((lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').mkey is defined)
+            and
+            (
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload')['address-type'] != glb_server.1.address_type | default('ipv4')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').gateway != glb_server.1.gateway | default('')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').health_check_ctrl != glb_server.1.health_check_ctrl | default('disable')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').health_check_inherit != glb_server.1.health_check_inherit | default('enable')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').health_check_list != glb_server.1.health_check_list | default('')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').health_check_relationship != glb_server.1.health_check_relationship | default('OR')
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').ip != glb_server.1.ipv4
+            or
+            (lookup('url', fad_glb_server_member_api_endpoint
+            % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').ip6 != glb_server.1.ipv6 | default('::')
+            )
+          changed_when: "fad_glb_server_member_put_results.json.payload == 0"
+          failed_when: "fad_glb_server_member_put_results.json.payload not in [0, -15]"
+
+        - name: Print out the GLB Server Member values after create/update task.
+          ansible.builtin.debug:
+            msg: >
+              {{ (lookup('url', fad_glb_server_member_api_endpoint
+              % (glb_server.0.name, glb_server.1.name), validate_certs=false, split_lines=false,
+              headers=fad_api_header) | from_json).get('payload') }}
+          loop: "{{ fad_glb_servers | subelements('server_members') }}"
+          loop_control:
+            loop_var: glb_server
+            label: "{{ glb_server.1.name + ' of ' + glb_server.0.name }}"
+          tags: [debug]
