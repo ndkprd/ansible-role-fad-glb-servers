@@ -9,5 +9,5 @@
 - name: Create/update GLB Server Member entries.
   vars:
     fad_glb_server_member_api_endpoint: "{{ fad_base_url + fad_endpoint.glb_server_member }}"
-  ansible.buitin.import_tasks: fad_glb_servers_member.yaml
+  ansible.builtin.import_tasks: fad_glb_servers_member.yaml
   tags: [fad_glb_servers, fad_glb_server_members]
